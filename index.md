@@ -1,37 +1,37 @@
-## Welcome to GitHub Pages
+go:-solution(S).
 
-You can use the [editor on GitHub](https://github.com/vanya-patel19/vanya-patel19.github.io/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
+solution(ActionList):-init(I),nl,write(init),tab(4),write(I),
+                      nl,solution(I,[],ActionList),!.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+solution(State,VisitedStates,[]) :- final(State).
 
-### Markdown
+solution(State,VisitedStates, [Action|Rest]) :- applicable(Action,State) ,
+                                        apply(Action,State,NewState),
+                    \+visited(NewState,VisitedStates), write(Action), tab(4) , write(NewState), nl,
+                    solution(NewState,[State|VisitedStates],Rest).
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+visited(State,[VisitedState|OtherVisitedStates]) :-   sameState(State,VisitedState).
 
-```markdown
-Syntax highlighted code block
+visited(State,[VisitedState|OtherVisitedStates]) :- visited(State,OtherVisitedStates).
+sameState(S,S).
 
-# Header 1
-## Header 2
-### Header 3
 
-- Bulleted
-- List
+init(state(0,0)).
+final(state(2,X)).
+applicable(emptyA,state(Qa,Qb)) :- Qa > 0.
+applicable(emptyB,state(Qa,Qb)) :- Qb > 0.
+applicable(fillA,state(Qa,Qb)) :- Qa < 4.
+applicable(fillB,state(Qa,Qb)) :- Qb < 3.
+applicable(emptyAinB,state(Qa,Qb)) :- Qa > 0 , Qtot is Qa + Qb , Qtot =< 3.
+applicable(emptyBinA,state(Qa,Qb)) :- Qb > 0, Qtot is Qa + Qb , Qtot =< 4.
+applicable(fillAwithB,state(Qa,Qb)) :- Qa < 4, Qtrasf is 4 - Qa , Qtrasf =< Qb.
+applicable(fillBwithA,state(Qa,Qb)) :- Qb < 3, Qtrasf is 3 - Qb , Qtrasf=<Qa.
 
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/vanya-patel19/vanya-patel19.github.io/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+apply(emptyA,state(Qa,Qb),state(0,Qb)).
+apply(emptyB,state(Qa,Qb),state(Qa,0)).
+apply(fillA,state(Qa,Qb),state(4,Qb)).
+apply(fillB,state(Qa,Qb),state(Qa,3)).
+apply(emptyAinB,state(Qa,Qb),state(0,Qtot)) :- Qtot is Qa+Qb.
+apply(emptyBinA,state(Qa,Qb),state(Qtot,0)) :- Qtot is Qa+Qb.
+apply(fillAwithB,state(Qa,Qb),state(4,NewQb)) :- NewQb is Qb-(4-Qa).
+apply(fillAwithB,state(Qa,Qb),state(NewQa,3)) :- NewQa is Qa-(3-Qb).
